@@ -13,11 +13,12 @@ if __name__ == "__main__":
     cfg.distributed = distributed
     if distributed:
         torch.cuda.set_device(args.local_rank)
-        torch.distributed.init_process_group(backend='nccl', init_method='env://')
+        torch.distributed.init_process_group(backend='nccl',
+                                             init_method='env://')
 
     net = get_model(cfg)
 
-    state_dict = torch.load(cfg.test_model, map_location = 'cpu')['model']
+    state_dict = torch.load(cfg.test_model, map_location='cpu')['model']
     compatible_state_dict = {}
     for k, v in state_dict.items():
         if 'module.' in k:
@@ -25,10 +26,11 @@ if __name__ == "__main__":
         else:
             compatible_state_dict[k] = v
 
-    net.load_state_dict(compatible_state_dict, strict = True)
+    net.load_state_dict(compatible_state_dict, strict=True)
 
     if distributed:
-        net = torch.nn.parallel.DistributedDataParallel(net, device_ids = [args.local_rank])
+        net = torch.nn.parallel.DistributedDataParallel(
+            net, device_ids=[args.local_rank])
 
     if not os.path.exists(cfg.test_work_dir):
         os.mkdir(cfg.test_work_dir)
