@@ -64,7 +64,7 @@ class resnet(torch.nn.Module):
 
 
 class mobilenet_v3(torch.nn.Module):
-    def __init__(self, layers, weights=None, ):
+    def __init__(self, weights=None, ):
         print("loading the mobilenetv3 model ...")
         super(mobilenet_v3, self).__init__()
         model = torchvision.models.mobilenet_v3_large(weights=None)

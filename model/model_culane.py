@@ -36,8 +36,10 @@ class parsingNet(torch.nn.Module):
         mlp_mid_dim = 2048
         self.input_dim = input_height // 32 * input_width // 32 * 8
 
-        # self.model = resnet(backbone, pretrained=pretrained)
-        self.model = mobilenet_v3()
+        if backbone == 'mobilenetv3':
+            self.model = mobilenet_v3()
+        else:
+            self.model = resnet(backbone, pretrained=pretrained)
 
         # for avg pool experiment
         # self.pool = torch.nn.AdaptiveAvgPool2d(1)
@@ -52,9 +54,12 @@ class parsingNet(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Linear(mlp_mid_dim, self.total_dim),
         )
-        self.pool = torch.nn.Conv2d(512, 8, 1) if backbone in [
-            '34', '18', '34fca'
-        ] else torch.nn.Conv2d(2048, 8, 1)
+        if backbone == 'mobilenetv3':
+            self.pool = torch.nn.Conv2d(160, 8, 1)
+        elif backbone in ['34', '18', '34fca']:
+            self.pool = torch.nn.Conv2d(512, 8, 1)  
+        else:
+            self.pool = torch.nn.Conv2d(2048, 8, 1)
         if self.use_aux:
             self.seg_head = SegHead(backbone,
                                     num_lane_on_row + num_lane_on_col)

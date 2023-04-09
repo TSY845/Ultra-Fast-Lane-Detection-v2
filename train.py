@@ -89,7 +89,7 @@ if __name__ == "__main__":
     dist_print(cfg)
     assert cfg.backbone in [
         '18', '34', '50', '101', '152', '50next', '101next', '50wide',
-        '101wide', '34fca'
+        '101wide', '34fca', 'mobilenetv3'
     ]
 
     train_loader = get_train_loader(cfg)
